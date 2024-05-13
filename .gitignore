@@ -76,4 +76,5 @@ Temporary Items
 .env
 
 # Directories docker
+docker/nginx/sites-enabled/*.conf
 src

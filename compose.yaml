@@ -1,0 +1,80 @@
+version: "3.9"
+
+services:
+  nginx:
+    container_name: nginx
+    restart: always
+    image: powaline/nginx:1.25
+    ports:
+      - ${NGINX_PORT:-80}:80
+      - ${NGINX_HTTPS_PORT:-443}:443
+    volumes: &appvolumes
+      - ./docker/nginx/sites-enabled:/etc/nginx/conf.d
+      - ./src:/var/www:cached
+      - sock-data:/sock
+      - ssl-data:/etc/nginx/certs
+    depends_on:
+      - phpfpm
+      - mysql
+      - postgres
+    extra_hosts: &appextrahosts
+      - "*:172.17.0.1"
+    networks:
+      - powaline
+
+  phpfpm:
+    container_name: php-fpm
+    restart: always
+    image: powaline/php:8.3
+    volumes: *appvolumes
+    extra_hosts: *appextrahosts
+    environment:
+      - BLACKFIRE_CLIENT_ID=${BLACKFIRE_CLIENT_ID}
+      - BLACKFIRE_CLIENT_TOKEN=${BLACKFIRE_CLIENT_TOKEN}
+      - COMPOSER_DISABLE_XDEBUG_WARN=${COMPOSER_DISABLE_XDEBUG_WARN:-1}
+      - PHP_CS_FIXER_IGNORE_ENV=${PHP_CS_FIXER_IGNORE_ENV:-1}
+      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=${PUPPETEER_SKIP_CHROMIUM_DOWNLOAD:-true}
+    networks:
+      - powaline
+
+  mysql:
+    container_name: mysql
+    restart: always
+    image: mysql:8.3
+    ports:
+      - ${MYSQL_DB_PORT:-3306}:3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --default-authentication-plugin=mysql_native_password
+    networks:
+      - powaline
+
+  postgres:
+    container_name: postgres
+    restart: always
+    image: postgres:16-alpine
+    ports:
+      - ${POSTGRES_DB_PORT:-5432}:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-root}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-root}
+    networks:
+      - powaline
+
+volumes:
+  mysql-data:
+  postgres-data:
+  sock-data:
+  ssl-data:
+
+networks:
+  powaline:
+    driver: bridge
+    name: powaline

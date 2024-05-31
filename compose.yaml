@@ -4,7 +4,7 @@ services:
   nginx:
     container_name: nginx
     restart: always
-    image: powaline/nginx:1.25
+    image: focela/nginx:1.25
     ports:
       - ${NGINX_PORT:-80}:80
       - ${NGINX_HTTPS_PORT:-443}:443
@@ -20,12 +20,12 @@ services:
     extra_hosts: &appextrahosts
       - "*:172.17.0.1"
     networks:
-      - powaline
+      - focela
 
   phpfpm:
     container_name: php-fpm
     restart: always
-    image: powaline/php:8.3
+    image: focela/php:8.3
     volumes: *appvolumes
     extra_hosts: *appextrahosts
     environment:
@@ -35,7 +35,7 @@ services:
       - PHP_CS_FIXER_IGNORE_ENV=${PHP_CS_FIXER_IGNORE_ENV:-1}
       - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=${PUPPETEER_SKIP_CHROMIUM_DOWNLOAD:-true}
     networks:
-      - powaline
+      - focela
 
   mysql:
     container_name: mysql
@@ -52,7 +52,7 @@ services:
       --collation-server=utf8mb4_unicode_ci
       --default-authentication-plugin=mysql_native_password
     networks:
-      - powaline
+      - focela
 
   postgres:
     container_name: postgres
@@ -66,7 +66,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER:-root}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-root}
     networks:
-      - powaline
+      - focela
 
 volumes:
   mysql-data:
@@ -75,6 +75,6 @@ volumes:
   ssl-data:
 
 networks:
-  powaline:
+  focela:
     driver: bridge
-    name: powaline
+    name: focela

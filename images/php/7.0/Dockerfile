@@ -1,5 +1,5 @@
 FROM php:7.0-fpm
-LABEL maintainer="Son Tran Thanh <286.trants@gmail.com>"
+LABEL maintainer="The Focela Authors <opensource@focela.com>"
 
 ARG APP_ID=1000
 

@@ -49,6 +49,18 @@ RUN pecl channel-update pecl.php.net && pecl install \
   && pecl clear-cache \
   && rm -rf /tmp/pear
 
+RUN curl -L https://github.com/Imagick/imagick/archive/28f27044e435a2b203e32675e942eb8de620ee58.zip -o imagick.zip \
+    && unzip imagick.zip \
+    && rm imagick.zip \
+    && cd imagick-28f27044e435a2b203e32675e942eb8de620ee58 \
+    && phpize \
+    && ./configure --with-php-config=/usr/local/bin/php-config \
+    && make \
+    && make install \
+    && echo "extension=imagick.so" >> $PHP_INI_DIR/conf.d/imagick.ini \
+    && cd .. \
+    && rm -rf imagick-28f27044e435a2b203e32675e942eb8de620ee58
+
 RUN docker-php-ext-configure \
     gd --with-freetype --with-jpeg --with-webp \
   && docker-php-ext-install \

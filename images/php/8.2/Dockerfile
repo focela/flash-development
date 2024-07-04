@@ -24,6 +24,7 @@ RUN apt-get update && apt-get install -y \
     libmcrypt-dev \
     libonig-dev \
     libpng-dev \
+    libpq-dev \
     libsodium-dev \
     libssh2-1-dev \
     libwebp-dev \
@@ -63,7 +64,9 @@ RUN docker-php-ext-configure \
     mysqli \
     opcache \
     pcntl \
+    pdo \
     pdo_mysql \
+    pdo_pgsql \
     soap \
     sockets \
     sodium \

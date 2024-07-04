@@ -53,11 +53,6 @@ This configuration has been tested on Mac & Linux. Windows is supported through 
   additional helpers.
 - `bin/stop`: Stop all project containers.
 
-## Configuration
-
-After publishing, the laratrust config file can be found under `config/focela.laratrust.php `
-where you can modify the package configuration.
-
 ## Contributing
 
 We encourage and support an active, healthy community of contributors &mdash;

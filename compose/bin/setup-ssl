@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+#
+# Copyright (c) 2024 Focela Technologies. All rights reserved.
+# Use of this source code is governed by a MIT style
+# license that can be found in the LICENSE file.
+#
+
+[ -z "$1" ] && echo "Please specify a domain (ex. mydomain.test)" && exit
+
+# Generate certificate authority if not already setup
+if ! bin/docker-compose exec -T -u root nginx cat /root/.local/share/mkcert/rootCA.pem | grep -q 'BEGIN CERTIFICATE'; then
+  bin/setup-ssl-ca
+fi
+
+# Generate the certificate for the specified domain
+DOMAIN_WITHOUT_PORT=$(echo "$@" | cut -d ':' -f1)
+bin/docker-compose exec -T -u root nginx mkcert -key-file nginx.key -cert-file nginx.crt "$DOMAIN_WITHOUT_PORT"
+echo "Moving key and cert to /etc/nginx/certs/..."
+bin/docker-compose exec -T -u root nginx chown app:app nginx.key nginx.crt
+bin/docker-compose exec -T -u root nginx mv nginx.key nginx.crt /etc/nginx/certs/
+
+# Restart nginx to apply the updates
+echo "Restarting containers to apply updates..."
+bin/restart

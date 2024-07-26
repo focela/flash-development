@@ -1,4 +1,4 @@
-FROM php:7.4-fpm-bookworm
+FROM php:7.4-fpm-bullseye
 LABEL maintainer="Focela Technologies <opensource@focela.com>"
 
 ARG APP_ID=1000

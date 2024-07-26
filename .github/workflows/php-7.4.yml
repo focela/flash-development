@@ -3,7 +3,7 @@ name: Build PHP 7.4
 on: workflow_dispatch
 
 jobs:
-  php-81:
+  php-74:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
